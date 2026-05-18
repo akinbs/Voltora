@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import { ShoppingCart, ArrowRight } from 'lucide-react'
 
 export function CartEmptyState() {

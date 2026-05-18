@@ -1,5 +1,6 @@
-import { CreditCard, Building2, Bitcoin, AlertTriangle } from 'lucide-react'
+﻿import { CreditCard, Building2, Bitcoin, AlertTriangle } from 'lucide-react'
 import type { CheckoutFormState } from '../../types/checkout'
+import { FlipCard } from './FlipCard'
 
 interface CheckoutPaymentMockProps {
   form:     CheckoutFormState
@@ -59,9 +60,19 @@ export function CheckoutPaymentMock({ form, onChange, onNext, onBack }: Checkout
         })}
       </div>
 
-      {/* Card fields */}
+      {/* Card preview + fields */}
       {form.paymentMethod === 'card' && (
         <div className="space-y-4">
+          {/* Live card preview */}
+          <div className="flex justify-center py-2">
+            <FlipCard
+              cardNumber={form.cardNumber}
+              cardName={form.cardName}
+              cardExpiry={form.cardExpiry}
+              cardCvc={form.cardCvc}
+            />
+          </div>
+          <p className="text-center text-[10px] text-muted/40">Hover to see back · CVC shown on reverse</p>
           <div>
             <label className="block text-xs font-semibold text-voltora-black mb-1.5">Card number</label>
             <input

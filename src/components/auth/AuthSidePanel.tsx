@@ -1,4 +1,4 @@
-import { Shield, Heart, Zap } from 'lucide-react'
+﻿import { Shield, Heart, Zap } from 'lucide-react'
 
 const FEATURES = [
   { icon: Shield, label: 'Secure account',   desc: 'SSL-encrypted & private'  },

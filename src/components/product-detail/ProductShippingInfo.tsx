@@ -1,4 +1,4 @@
-import { Clock, Package, MessageCircle, RotateCcw } from 'lucide-react'
+﻿import { Clock, Package, MessageCircle, RotateCcw } from 'lucide-react'
 
 const ITEMS = [
   { icon: Clock,          title: 'Fast Dispatch',       desc: 'Orders placed before 14:00 ship the same business day.' },

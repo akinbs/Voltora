@@ -36,11 +36,10 @@ export function SectionHeader({
       )}
     >
       {eyebrow && (
-        <span className="
-          inline-flex items-center gap-1.5
-          text-xs font-semibold tracking-widest uppercase
-          text-mint
-        ">
+        <span
+          className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-widest uppercase"
+          style={{ color: '#F59E0B' }}
+        >
           {eyebrow}
         </span>
       )}

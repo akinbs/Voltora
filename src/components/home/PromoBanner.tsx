@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Zap } from 'lucide-react'
 import { Button } from '../ui/Button'
@@ -35,7 +35,7 @@ export function PromoBanner() {
             viewport={{ once: true }}
             className="flex-1 text-center lg:text-left"
           >
-            <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-mint mb-5">
+            <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase mb-5" style={{ color: '#F59E0B' }}>
               <Zap size={11} aria-hidden="true" />
               New Arrivals
             </span>

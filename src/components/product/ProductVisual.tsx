@@ -1,4 +1,4 @@
-import { useId } from 'react'
+﻿import { useId } from 'react'
 import { cn } from '../../lib/cn'
 import type { ProductVisualType } from '../../types/product'
 
@@ -14,7 +14,7 @@ interface VisualConfig {
 const CONFIGS: Record<ProductVisualType, VisualConfig> = {
   board:     { bg: 'linear-gradient(145deg,#0a1f14,#060e09)', accent: '#CFFFE2', dotColor: '#CFFFE2', glow: 'rgba(207,255,226,0.09)', chipBg: '#0d2318', label: 'Dev Board'    },
   sensor:    { bg: 'linear-gradient(145deg,#0c1428,#080d1c)', accent: '#818cf8', dotColor: '#818cf8', glow: 'rgba(129,140,248,0.10)', chipBg: '#0e1530', label: 'Sensor'       },
-  module:    { bg: 'linear-gradient(145deg,#1a0e00,#0f0700)', accent: '#f59e0b', dotColor: '#fbbf24', glow: 'rgba(245,158,11,0.08)',  chipBg: '#1c1000', label: 'Module'       },
+  module:    { bg: 'linear-gradient(145deg,#1a0e00,#0f0700)', accent: '#CFFFE2', dotColor: '#fbbf24', glow: 'rgba(207,255,226,0.08)',  chipBg: '#1c1000', label: 'Module'       },
   motor:     { bg: 'linear-gradient(145deg,#0e0e0e,#070707)', accent: '#94a3b8', dotColor: '#94a3b8', glow: 'rgba(148,163,184,0.07)', chipBg: '#161616', label: 'DC Motor'     },
   tool:      { bg: 'linear-gradient(145deg,#0d1117,#080d14)', accent: '#64748b', dotColor: '#94a3b8', glow: 'rgba(100,116,139,0.07)', chipBg: '#141a22', label: 'Tool'         },
   power:     { bg: 'linear-gradient(145deg,#180a00,#0f0500)', accent: '#f97316', dotColor: '#fb923c', glow: 'rgba(249,115,22,0.08)',  chipBg: '#1c0a00', label: 'Power Module' },

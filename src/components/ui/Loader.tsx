@@ -1,4 +1,4 @@
-import { cn } from '../../lib/cn'
+﻿import { cn } from '../../lib/cn'
 
 type LoaderVariant = 'spinner' | 'dots' | 'circuit'
 type LoaderSize    = 'sm' | 'md' | 'lg'

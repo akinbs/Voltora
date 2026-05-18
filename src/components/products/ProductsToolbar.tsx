@@ -1,4 +1,4 @@
-import { SlidersHorizontal, Search } from 'lucide-react'
+﻿import { SlidersHorizontal, Search } from 'lucide-react'
 import { ProductsSortSelect } from './ProductsSortSelect'
 import { ProductsViewToggle } from './ProductsViewToggle'
 import { ProductsResultSummary } from './ProductsResultSummary'

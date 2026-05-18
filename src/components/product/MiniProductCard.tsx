@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import { Heart, ShoppingCart, ChevronRight, Cpu, Radio, Zap, Package2, Wrench, Cog, BatteryCharging, Plug } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { Product, ProductVisualType } from '../../types/product'

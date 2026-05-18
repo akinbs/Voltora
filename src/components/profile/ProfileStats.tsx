@@ -1,4 +1,4 @@
-import { ShoppingBag, Heart, MapPin, ShoppingCart } from 'lucide-react'
+﻿import { ShoppingBag, Heart, MapPin, ShoppingCart } from 'lucide-react'
 
 const STATS = [
   { icon: ShoppingBag, label: 'Orders',            value: '4',  accent: '#CFFFE2' },

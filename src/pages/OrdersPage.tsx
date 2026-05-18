@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+﻿import { motion } from 'framer-motion'
 import { ShoppingBag, Package, Truck, CheckCircle2, XCircle, ExternalLink } from 'lucide-react'
 import type { OrderStatus } from '../types/order'
 import { mockOrders } from '../data/mockOrders'

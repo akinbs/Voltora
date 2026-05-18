@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Settings, User, Lock, Bell, DollarSign, Trash2, AlertTriangle, Check } from 'lucide-react'
 import { mockUser } from '../data/mockUser'

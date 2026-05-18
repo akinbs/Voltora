@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+﻿import { motion } from 'framer-motion'
 import { homeStats } from '../../data/home'
 import { AnimatedCounter } from '../motion/AnimatedCounter'
 

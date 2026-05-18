@@ -13,6 +13,11 @@ import ProfilePage from '../pages/ProfilePage'
 import OrdersPage from '../pages/OrdersPage'
 import SettingsPage from '../pages/SettingsPage'
 import NotFoundPage from '../pages/NotFoundPage'
+import FlashSalePage from '../pages/FlashSalePage'
+import NewArrivalsPage from '../pages/NewArrivalsPage'
+import BestSellersPage from '../pages/BestSellersPage'
+import DealsPage from '../pages/DealsPage'
+import SupportPage from '../pages/SupportPage'
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +27,11 @@ export const router = createBrowserRouter([
       { index: true,               element: <HomePage />            },
       { path: 'products',          element: <ProductsPage />        },
       { path: 'products/:id',      element: <ProductDetailPage />   },
+      { path: 'flash-sale',        element: <FlashSalePage />       },
+      { path: 'new-arrivals',      element: <NewArrivalsPage />     },
+      { path: 'best-sellers',      element: <BestSellersPage />     },
+      { path: 'deals',             element: <DealsPage />           },
+      { path: 'support',           element: <SupportPage />         },
       { path: 'cart',              element: <CartPage />            },
       { path: 'wishlist',          element: <WishlistPage />        },
       { path: 'checkout',          element: <CheckoutPage />        },

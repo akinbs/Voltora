@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Product, ProductImage } from '../../types/product'
 import { ProductVisual } from '../product/ProductVisual'

@@ -1,4 +1,4 @@
-import type { CheckoutFormState } from '../../types/checkout'
+﻿import type { CheckoutFormState } from '../../types/checkout'
 
 interface CheckoutContactFormProps {
   form:     CheckoutFormState

@@ -1,6 +1,5 @@
-import { NavLink, useLocation, Link } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Zap } from 'lucide-react'
 import { sidebarSections } from '../../data/navigation'
 
 interface SidebarProps {
@@ -41,41 +40,14 @@ function SidebarContent({ isOpen, isMobile, onToggle, onClose }: SidebarContentP
     <div className="flex flex-col h-full">
 
       {/* ── Top brand row ─────────────────────────────────────── */}
-      <div
-        className={`
-          h-16 flex items-center shrink-0 border-b border-white/5
-          ${expanded ? 'px-3 justify-between' : 'justify-around'}
-        `}
-      >
-        {/* Zap icon only — no brand text */}
-        <Link
-          to="/"
-          aria-label="Voltora home"
-          className="flex items-center justify-center w-7 h-7 rounded-lg bg-mint/10 text-mint shrink-0
-                     hover:bg-mint/15 transition-colors duration-150
-                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
-        >
-          <Zap size={14} strokeWidth={2.5} aria-hidden="true" />
-        </Link>
-
-        {/* Toggle / Close button */}
+      <div className="h-16 flex items-center justify-center shrink-0 border-b border-white/5">
         <button
           type="button"
           aria-label={isMobile ? 'Close sidebar' : isOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           onClick={isMobile ? onClose : onToggle}
-          className="
-            flex items-center justify-center w-8 h-8 rounded-lg shrink-0
-            text-white/50 hover:text-white hover:bg-white/8
-            transition-all duration-150
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint
-          "
+          className="flex items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint"
         >
-          {isMobile
-            ? <X    size={16} strokeWidth={2} aria-hidden="true" />
-            : isOpen
-              ? <X    size={16} strokeWidth={2} aria-hidden="true" />
-              : <Menu size={16} strokeWidth={2} aria-hidden="true" />
-          }
+          <img src="/logo.png" alt="Voltora logo" className="w-10 h-10 object-contain" draggable={false} />
         </button>
       </div>
 
@@ -102,6 +74,7 @@ function SidebarContent({ isOpen, isMobile, onToggle, onClose }: SidebarContentP
                   <li key={link.id}>
                     <NavLink
                       to={link.href}
+                      end={link.href === '/'}
                       aria-label={expanded ? undefined : link.label}
                       title={expanded ? undefined : link.label}
                       className={({ isActive }) => {

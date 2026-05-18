@@ -1,4 +1,4 @@
-import type { StockStatus } from '../../types/product'
+﻿import type { StockStatus } from '../../types/product'
 
 interface ProductStockBadgeProps {
   stockStatus: StockStatus

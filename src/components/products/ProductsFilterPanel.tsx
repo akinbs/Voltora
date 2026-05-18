@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { ChevronDown, SlidersHorizontal, X } from 'lucide-react'
 import {
   FILTER_CATEGORIES, FILTER_BRANDS, FILTER_TAGS, FILTER_RATINGS,

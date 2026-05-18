@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom'
+﻿import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Cpu, Zap } from 'lucide-react'
+import { ArrowRight, Cpu } from 'lucide-react'
 import { Button } from '../ui/Button'
 
 const fadeUp = (delay = 0) => ({
@@ -20,8 +20,7 @@ export function HeroSection() {
         {/* ── Left: text ── */}
         <div className="flex-1 max-w-xl">
           <motion.div {...fadeUp(0)}>
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 text-xs font-semibold tracking-widest uppercase text-mint border border-mint/20 rounded-full bg-mint/8">
-              <Zap size={11} aria-hidden="true" />
+            <span className="inline-flex items-center mb-6 text-xs font-semibold tracking-widest uppercase" style={{ color: '#F59E0B' }}>
               Premium Electronic Components
             </span>
           </motion.div>

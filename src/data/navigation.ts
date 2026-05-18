@@ -1,53 +1,56 @@
 import {
-  Cpu,
-  Radio,
-  Bot,
+  Home,
+  ShoppingBag,
   Zap,
-  Layers,
-  Cable,
-  Wrench,
-  Package2,
   Sparkles,
   TrendingUp,
   Tag,
-  Search,
   Heart,
   ShoppingCart,
   User,
   Settings,
   ClipboardList,
   LogOut,
+  LifeBuoy,
 } from 'lucide-react'
 import type { NavSection, NavAction, ProfileMenuItem } from '../types/navigation'
 
 export const sidebarSections: NavSection[] = [
   {
-    title: 'Categories',
+    title: 'Main',
     links: [
-      { id: 'boards',     label: 'Development Boards', href: '/products?cat=boards',   icon: Cpu      },
-      { id: 'sensors',    label: 'Sensors',            href: '/products?cat=sensors',  icon: Radio    },
-      { id: 'robotics',   label: 'Robotics',           href: '/products?cat=robotics', icon: Bot      },
-      { id: 'power',      label: 'Power Modules',      href: '/products?cat=power',    icon: Zap      },
-      { id: 'components', label: 'Components',         href: '/products?cat=components',icon: Layers  },
-      { id: 'cables',     label: 'Cables',             href: '/products?cat=cables',   icon: Cable    },
-      { id: 'tools',      label: 'Tools',              href: '/products?cat=tools',    icon: Wrench   },
-      { id: 'kits',       label: 'Kits',               href: '/products?cat=kits',     icon: Package2 },
+      { id: 'home',  label: 'Home',     href: '/',         icon: Home        },
+      { id: 'shop',  label: 'Shop',     href: '/products', icon: ShoppingBag },
     ],
   },
   {
     title: 'Discover',
     links: [
-      { id: 'new',        label: 'New Arrivals',  href: '/products?sort=new',  icon: Sparkles    },
-      { id: 'bestseller', label: 'Best Sellers',  href: '/products?sort=best', icon: TrendingUp  },
-      { id: 'campaigns',  label: 'Campaigns',     href: '/products?sort=sale', icon: Tag         },
+      { id: 'flash-sale',    label: 'Flash Sale',    href: '/flash-sale',    icon: Zap        },
+      { id: 'new-arrivals',  label: 'New Arrivals',  href: '/new-arrivals',  icon: Sparkles   },
+      { id: 'best-sellers',  label: 'Best Sellers',  href: '/best-sellers',  icon: TrendingUp },
+      { id: 'deals',         label: 'Deals',         href: '/deals',         icon: Tag        },
+    ],
+  },
+  {
+    title: 'Account',
+    links: [
+      { id: 'orders',   label: 'My Orders', href: '/orders',   icon: ClipboardList },
+      { id: 'wishlist', label: 'Wishlist',  href: '/wishlist', icon: Heart         },
+      { id: 'profile',  label: 'Profile',   href: '/profile',  icon: User          },
+    ],
+  },
+  {
+    title: 'Help',
+    links: [
+      { id: 'support', label: 'Support', href: '/support', icon: LifeBuoy },
     ],
   },
 ]
 
 export const navActions: NavAction[] = [
-  { id: 'search',   label: 'Search',   href: '/search',   icon: Search                     },
-  { id: 'wishlist', label: 'Wishlist', href: '/wishlist', icon: Heart,        badge: 4     },
-  { id: 'cart',     label: 'Cart',     href: '/cart',     icon: ShoppingCart, badge: 3     },
+  { id: 'wishlist', label: 'Wishlist', href: '/wishlist', icon: Heart,        badge: 4 },
+  { id: 'cart',     label: 'Cart',     href: '/cart',     icon: ShoppingCart, badge: 3 },
 ]
 
 export const profileMenuItems: ProfileMenuItem[] = [

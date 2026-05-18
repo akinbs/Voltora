@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { ShoppingCart, Zap, Heart, GitCompare, Lock } from 'lucide-react'
 import type { Product } from '../../types/product'
 import { ProductRating } from '../product/ProductRating'

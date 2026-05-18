@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+﻿import { motion } from 'framer-motion'
 import { ShoppingCart } from 'lucide-react'
 import { useMockCart } from '../hooks/useMockCart'
 import { CartItemCard } from '../components/cart/CartItemCard'

@@ -1,4 +1,4 @@
-import { FileText, Download, FileX } from 'lucide-react'
+﻿import { FileText, Download, FileX } from 'lucide-react'
 import type { Product } from '../../types/product'
 
 interface ProductDatasheetCardProps {

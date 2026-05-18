@@ -1,4 +1,4 @@
-import { ShieldCheck, CreditCard, Zap, MessageCircle } from 'lucide-react'
+﻿import { ShieldCheck, CreditCard, Zap, MessageCircle } from 'lucide-react'
 
 const BADGES = [
   { icon: ShieldCheck,   title: 'Original Parts',    desc: 'Verified authentic components'    },

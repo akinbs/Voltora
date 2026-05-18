@@ -716,12 +716,3 @@ When updating screenshots, keep the same filenames so the README stays intact.
 
 ---
 
-## License
-
-This project is currently prepared as a portfolio and learning project.  
-You can add a license later based on the intended usage.
-
-Recommended options:
-
-- MIT License for open source usage
-- Private repository if this becomes a commercial product

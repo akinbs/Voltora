@@ -1,26 +1,68 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { Product, ProductImage } from '../../types/product'
+import type { Product, ProductImage, ProductStorageImage as StorageImg } from '../../types/product'
 import { ProductVisual } from '../product/ProductVisual'
 
 interface ProductGalleryProps {
   product: Product
 }
 
-function getImages(product: Product): ProductImage[] {
-  if (product.images && product.images.length > 0) return product.images
+type GalleryItem =
+  | { kind: 'storage'; id: string; label: string; url: string; alt: string }
+  | { kind: 'visual';  id: string; label: string; visualType: Product['visualType'] }
+
+function buildGallery(product: Product): GalleryItem[] {
+  if (product.storageImages && product.storageImages.length > 0) {
+    const sorted = [...product.storageImages].sort((a, b) => a.sortOrder - b.sortOrder)
+    return sorted.map((img: StorageImg) => ({
+      kind:  'storage',
+      id:    img.id,
+      label: img.alt || product.name,
+      url:   img.url,
+      alt:   img.alt || product.name,
+    }))
+  }
+
+  if (product.images && product.images.length > 0) {
+    return product.images.map((img: ProductImage) => ({
+      kind:      'visual',
+      id:        img.id,
+      label:     img.label,
+      visualType: img.visualType,
+    }))
+  }
+
   return [
-    { id: 'main',   label: 'Main View',  visualType: product.visualType },
-    { id: 'alt1',   label: 'Circuit',    visualType: 'board'            },
-    { id: 'alt2',   label: 'Module',     visualType: 'module'           },
-    { id: 'alt3',   label: 'Package',    visualType: 'component'        },
+    { kind: 'visual', id: 'main',   label: 'Main View',  visualType: product.visualType },
+    { kind: 'visual', id: 'alt1',   label: 'Circuit',    visualType: 'board'            },
+    { kind: 'visual', id: 'alt2',   label: 'Module',     visualType: 'module'           },
+    { kind: 'visual', id: 'alt3',   label: 'Package',    visualType: 'component'        },
   ]
 }
 
+function GalleryImage({ item, name, size }: { item: GalleryItem; name: string; size?: 'xl' | 'xs' }) {
+  const [imgError, setImgError] = useState(false)
+
+  if (item.kind === 'storage' && !imgError) {
+    return (
+      <img
+        src={item.url}
+        alt={item.alt}
+        onError={() => setImgError(true)}
+        className="w-full h-full object-contain"
+        loading="lazy"
+      />
+    )
+  }
+
+  const vt = item.kind === 'visual' ? item.visualType : 'component'
+  return <ProductVisual visualType={vt} name={name} size={size} className="w-full" />
+}
+
 export function ProductGallery({ product }: ProductGalleryProps) {
-  const images        = getImages(product)
-  const [selected, setSelected] = useState(images[0].id)
-  const active        = images.find(img => img.id === selected) ?? images[0]
+  const gallery       = buildGallery(product)
+  const [selected, setSelected] = useState(gallery[0].id)
+  const active        = gallery.find(img => img.id === selected) ?? gallery[0]
 
   const isNew        = product.isNew
   const isBestSeller = product.isBestSeller
@@ -38,12 +80,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
           >
-            <ProductVisual
-              visualType={active.visualType}
-              name={`${product.name} – ${active.label}`}
-              size="xl"
-              className="w-full"
-            />
+            <GalleryImage item={active} name={product.name} size="xl" />
           </motion.div>
         </AnimatePresence>
 
@@ -92,7 +129,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
         role="group"
         aria-label="Product views"
       >
-        {images.map(img => {
+        {gallery.map(img => {
           const isActive = img.id === selected
           return (
             <button
@@ -108,12 +145,7 @@ export function ProductGallery({ product }: ProductGalleryProps) {
               `}
               style={{ width: 72, height: 56 }}
             >
-              <ProductVisual
-                visualType={img.visualType}
-                name={img.label}
-                size="xs"
-                className="w-full h-full"
-              />
+              <GalleryImage item={img} name={img.label} size="xs" />
               <span className="sr-only">{img.label}</span>
             </button>
           )

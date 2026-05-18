@@ -1,5 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { MainLayout } from '../components/layout/MainLayout'
+import { ProtectedRoute } from '../routes/ProtectedRoute'
+import { PublicOnlyRoute } from '../routes/PublicOnlyRoute'
 import HomePage from '../pages/HomePage'
 import ProductsPage from '../pages/ProductsPage'
 import ProductDetailPage from '../pages/ProductDetailPage'
@@ -24,24 +26,39 @@ export const router = createBrowserRouter([
     path: '/',
     element: <MainLayout />,
     children: [
-      { index: true,               element: <HomePage />            },
-      { path: 'products',          element: <ProductsPage />        },
-      { path: 'products/:id',      element: <ProductDetailPage />   },
-      { path: 'flash-sale',        element: <FlashSalePage />       },
-      { path: 'new-arrivals',      element: <NewArrivalsPage />     },
-      { path: 'best-sellers',      element: <BestSellersPage />     },
-      { path: 'deals',             element: <DealsPage />           },
-      { path: 'support',           element: <SupportPage />         },
-      { path: 'cart',              element: <CartPage />            },
-      { path: 'wishlist',          element: <WishlistPage />        },
-      { path: 'checkout',          element: <CheckoutPage />        },
-      { path: 'login',             element: <LoginPage />           },
-      { path: 'register',          element: <RegisterPage />        },
-      { path: 'forgot-password',   element: <ForgotPasswordPage />  },
-      { path: 'profile',           element: <ProfilePage />         },
-      { path: 'orders',            element: <OrdersPage />          },
-      { path: 'settings',          element: <SettingsPage />        },
-      { path: '*',                 element: <NotFoundPage />        },
+      { index: true,             element: <HomePage />          },
+      { path: 'products',        element: <ProductsPage />      },
+      { path: 'products/:id',    element: <ProductDetailPage /> },
+      { path: 'flash-sale',      element: <FlashSalePage />     },
+      { path: 'new-arrivals',    element: <NewArrivalsPage />   },
+      { path: 'best-sellers',    element: <BestSellersPage />   },
+      { path: 'deals',           element: <DealsPage />         },
+      { path: 'support',         element: <SupportPage />       },
+      { path: 'cart',            element: <CartPage />          },
+      { path: 'wishlist',        element: <WishlistPage />      },
+      { path: 'checkout',        element: <CheckoutPage />      },
+
+      // Public-only routes (redirect to /profile if already signed in)
+      {
+        element: <PublicOnlyRoute />,
+        children: [
+          { path: 'login',           element: <LoginPage />          },
+          { path: 'register',        element: <RegisterPage />       },
+          { path: 'forgot-password', element: <ForgotPasswordPage /> },
+        ],
+      },
+
+      // Protected routes (redirect to /login if not signed in)
+      {
+        element: <ProtectedRoute />,
+        children: [
+          { path: 'profile',  element: <ProfilePage />  },
+          { path: 'orders',   element: <OrdersPage />   },
+          { path: 'settings', element: <SettingsPage /> },
+        ],
+      },
+
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ])

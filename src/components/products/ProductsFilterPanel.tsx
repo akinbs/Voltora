@@ -6,16 +6,18 @@ import {
 import type { ProductFilters } from '../../types/filters'
 
 interface ProductsFilterPanelProps {
-  filters:            ProductFilters
-  onToggleCategory:   (v: string) => void
-  onToggleStock:      (v: string) => void
-  onToggleBrand:      (v: string) => void
-  onToggleTag:        (v: string) => void
-  onMinPrice:         (v: string) => void
-  onMaxPrice:         (v: string) => void
-  onRating:           (v: number | null) => void
-  onClearAll:         () => void
-  activeFilterCount:  number
+  filters:              ProductFilters
+  onToggleCategory:     (v: string) => void
+  onToggleStock:        (v: string) => void
+  onToggleBrand:        (v: string) => void
+  onToggleTag:          (v: string) => void
+  onMinPrice:           (v: string) => void
+  onMaxPrice:           (v: string) => void
+  onRating:             (v: number | null) => void
+  onClearAll:           () => void
+  activeFilterCount:    number
+  availableCategories?: string[]
+  availableBrands?:     string[]
 }
 
 const STOCK_OPTIONS = [
@@ -112,7 +114,15 @@ export function ProductsFilterPanel({
   onRating,
   onClearAll,
   activeFilterCount,
+  availableCategories,
+  availableBrands,
 }: ProductsFilterPanelProps) {
+  const categories = availableCategories && availableCategories.length > 0
+    ? availableCategories
+    : [...FILTER_CATEGORIES]
+  const brands = availableBrands && availableBrands.length > 0
+    ? availableBrands
+    : [...FILTER_BRANDS]
   return (
     <aside aria-label="Product filters" className="w-full">
       {/* Panel header */}
@@ -144,7 +154,7 @@ export function ProductsFilterPanel({
       {/* Category */}
       <Section title="Category">
         <div className="space-y-0.5">
-          {FILTER_CATEGORIES.map(cat => (
+          {categories.map(cat => (
             <FilterCheckbox
               key={cat}
               label={cat}
@@ -208,7 +218,7 @@ export function ProductsFilterPanel({
       {/* Brand */}
       <Section title="Brand" defaultOpen={false}>
         <div className="space-y-0.5">
-          {FILTER_BRANDS.map(brand => (
+          {brands.map(brand => (
             <FilterCheckbox
               key={brand}
               label={brand}

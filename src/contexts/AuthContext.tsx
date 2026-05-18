@@ -1,78 +1,137 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
-import type { MockUser } from '../types/user'
-import type { LoginFormValues, RegisterFormValues } from '../types/auth'
-import { mockUser } from '../data/mockUser'
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
+import type { User, Unsubscribe } from 'firebase/auth'
+import { authService } from '../services/firebase/authService'
+import { userService } from '../services/firebase/userService'
+import { getFirebaseAuthErrorMessage } from '../utils/firebaseErrorMessages'
+import { buildUserProfileFromFirebaseUser, isAdminRole, isSuperAdminRole } from '../utils/userHelpers'
+import type { LoginFormValues, RegisterFormValues, AuthActionResult } from '../types/auth'
+import type { UserProfile } from '../types/user'
 
 interface AuthState {
-  user:            MockUser | null
+  userProfile:     UserProfile | null
   isAuthenticated: boolean
   isLoading:       boolean
   error:           string | null
 }
 
-interface AuthContextValue extends AuthState {
-  login:         (values: LoginFormValues)    => Promise<boolean>
-  register:      (values: RegisterFormValues) => Promise<boolean>
-  logout:        () => void
-  forgotPassword:(email: string)              => Promise<boolean>
-  clearError:    () => void
+export interface AuthContextValue extends AuthState {
+  login:          (values: LoginFormValues)    => Promise<AuthActionResult>
+  register:       (values: RegisterFormValues) => Promise<AuthActionResult>
+  logout:         () => Promise<void>
+  forgotPassword: (email: string)              => Promise<AuthActionResult>
+  clearError:     () => void
+  isAdmin:        boolean
+  isSuperAdmin:   boolean
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>({
-    user:            null,
-    isAuthenticated: false,
-    isLoading:       false,
-    error:           null,
-  })
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [isLoading,   setIsLoading]   = useState(true)
+  const [error,       setError]       = useState<string | null>(null)
 
-  const login = useCallback(async (values: LoginFormValues): Promise<boolean> => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }))
-    await new Promise(r => setTimeout(r, 800))
-    if (!values.email || !values.password) {
-      setState(prev => ({ ...prev, isLoading: false, error: 'Invalid credentials.' }))
-      return false
+  useEffect(() => {
+    let unsubscribe: Unsubscribe | undefined
+    unsubscribe = authService.listenToAuthChanges(async (firebaseUser: User | null) => {
+      if (!firebaseUser) {
+        setUserProfile(null)
+        setIsLoading(false)
+        return
+      }
+      try {
+        const result = await userService.getUserProfile(firebaseUser.uid)
+        if (result.success && result.data) {
+          setUserProfile(result.data)
+        } else {
+          setUserProfile(buildUserProfileFromFirebaseUser(firebaseUser))
+        }
+      } catch {
+        setUserProfile(buildUserProfileFromFirebaseUser(firebaseUser))
+      } finally {
+        setIsLoading(false)
+      }
+    })
+    return () => unsubscribe?.()
+  }, [])
+
+  const login = useCallback(async (values: LoginFormValues): Promise<AuthActionResult> => {
+    setIsLoading(true)
+    setError(null)
+    const result = await authService.signInWithEmail(values.email, values.password, values.rememberMe)
+    if (!result.success) {
+      const msg = getFirebaseAuthErrorMessage(result.error)
+      setError(msg)
+      setIsLoading(false)
+      return { success: false, error: msg }
     }
-    setState({ user: mockUser, isAuthenticated: true, isLoading: false, error: null })
-    return true
-  }, [])
-
-  const register = useCallback(async (values: RegisterFormValues): Promise<boolean> => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }))
-    await new Promise(r => setTimeout(r, 1000))
-    if (values.password !== values.confirmPassword) {
-      setState(prev => ({ ...prev, isLoading: false, error: 'Passwords do not match.' }))
-      return false
+    if (result.data) {
+      void userService.updateUserLastLogin(result.data.uid)
     }
-    const newUser: MockUser = {
-      ...mockUser,
-      fullName:       values.fullName,
-      email:          values.email,
-      avatarInitials: values.fullName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase(),
+    return { success: true, error: null }
+  }, [])
+
+  const register = useCallback(async (values: RegisterFormValues): Promise<AuthActionResult> => {
+    setIsLoading(true)
+    setError(null)
+    const result = await authService.registerWithEmail(values.email, values.password, values.fullName)
+    if (!result.success || !result.data) {
+      const msg = getFirebaseAuthErrorMessage(result.error)
+      setError(msg)
+      setIsLoading(false)
+      return { success: false, error: msg }
     }
-    setState({ user: newUser, isAuthenticated: true, isLoading: false, error: null })
-    return true
+    const firebaseUser = result.data
+    const initials = values.fullName
+      .trim().split(/\s+/).slice(0, 2).map(n => n[0]?.toUpperCase() ?? '').join('')
+    await userService.createUserProfile(firebaseUser.uid, {
+      uid:               firebaseUser.uid,
+      fullName:          values.fullName,
+      email:             values.email,
+      role:              'customer',
+      status:            'active',
+      avatarInitials:    initials || 'U',
+      preferredCurrency: 'USD',
+      savedAddresses:    [],
+    })
+    return { success: true, error: null }
   }, [])
 
-  const logout = useCallback(() => {
-    setState({ user: null, isAuthenticated: false, isLoading: false, error: null })
+  const logout = useCallback(async (): Promise<void> => {
+    setError(null)
+    await authService.signOutUser()
+    setUserProfile(null)
   }, [])
 
-  const forgotPassword = useCallback(async (email: string): Promise<boolean> => {
-    setState(prev => ({ ...prev, isLoading: true, error: null }))
-    await new Promise(r => setTimeout(r, 700))
-    setState(prev => ({ ...prev, isLoading: false }))
-    return !!email
+  const forgotPassword = useCallback(async (email: string): Promise<AuthActionResult> => {
+    setError(null)
+    const result = await authService.sendPasswordReset(email)
+    if (!result.success) {
+      const msg = getFirebaseAuthErrorMessage(result.error)
+      setError(msg)
+      return { success: false, error: msg }
+    }
+    return { success: true, error: null }
   }, [])
 
-  const clearError = useCallback(() => {
-    setState(prev => ({ ...prev, error: null }))
-  }, [])
+  const clearError = useCallback(() => setError(null), [])
+
+  const role = userProfile?.role
 
   return (
-    <AuthContext.Provider value={{ ...state, login, register, logout, forgotPassword, clearError }}>
+    <AuthContext.Provider value={{
+      userProfile,
+      isAuthenticated: !!userProfile,
+      isLoading,
+      error,
+      login,
+      register,
+      logout,
+      forgotPassword,
+      clearError,
+      isAdmin:      isAdminRole(role),
+      isSuperAdmin: isSuperAdminRole(role),
+    }}>
       {children}
     </AuthContext.Provider>
   )

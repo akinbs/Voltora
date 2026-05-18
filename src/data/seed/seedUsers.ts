@@ -1,0 +1,46 @@
+import type { UserProfile } from '../../types/user'
+
+export const seedUsers: UserProfile[] = [
+  {
+    id:                'usr-demo-customer',
+    uid:               'demo-customer-uid',
+    fullName:          'Demo Customer',
+    email:             'customer@voltora.dev',
+    phone:             '+90 555 000 0001',
+    role:              'customer',
+    status:            'active',
+    avatarInitials:    'DC',
+    company:           'Voltora Maker Lab',
+    location:          'Istanbul, Türkiye',
+    preferredCurrency: 'USD',
+    savedAddresses: [
+      {
+        id:         'addr-seed-001',
+        title:      'Home',
+        fullName:   'Demo Customer',
+        phone:      '+90 555 000 0001',
+        address:    'Bağcılar Mah. İnönü Cad. No:12 Kat:3',
+        city:       'Istanbul',
+        country:    'Turkey',
+        postalCode: '34200',
+        isDefault:  true,
+      },
+    ],
+    createdAt: new Date('2024-09-01'),
+    updatedAt: new Date('2024-09-01'),
+  },
+  {
+    id:                'usr-demo-admin',
+    uid:               'demo-admin-uid',
+    fullName:          'Demo Admin',
+    email:             'admin@voltora.dev',
+    role:              'admin',
+    status:            'active',
+    avatarInitials:    'DA',
+    location:          'Istanbul, Türkiye',
+    preferredCurrency: 'USD',
+    savedAddresses:    [],
+    createdAt: new Date('2024-09-01'),
+    updatedAt: new Date('2024-09-01'),
+  },
+]

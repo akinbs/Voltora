@@ -17,3 +17,15 @@ export interface ForgotPasswordFormValues {
 }
 
 export type AuthMode = 'login' | 'register' | 'forgot-password'
+
+export interface AuthActionResult {
+  success: boolean
+  error:   string | null
+}
+
+export interface AuthUser {
+  uid:           string
+  email:         string | null
+  displayName:   string | null
+  emailVerified: boolean
+}

@@ -1,9 +1,9 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { UserPlus, Loader2, CheckCircle2 } from 'lucide-react'
 import { PasswordInput } from './PasswordInput'
 import { SocialAuthButtons } from './SocialAuthButtons'
-import { useMockAuth } from '../../hooks/useMockAuth'
+import { useAuth } from '../../hooks/useAuth'
 
 interface Errors {
   fullName?:        string
@@ -11,10 +11,11 @@ interface Errors {
   password?:        string
   confirmPassword?: string
   acceptTerms?:     string
+  form?:            string
 }
 
 export function RegisterForm() {
-  const { register, isLoading } = useMockAuth()
+  const { register, isLoading } = useAuth()
   const navigate = useNavigate()
 
   const [fullName,        setFullName]        = useState('')
@@ -39,10 +40,12 @@ export function RegisterForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
-    const ok = await register({ fullName, email, password, confirmPassword, acceptTerms })
-    if (ok) {
+    const result = await register({ fullName, email, password, confirmPassword, acceptTerms })
+    if (result.success) {
       setSuccess(true)
       setTimeout(() => navigate('/profile'), 900)
+    } else {
+      setErrors(prev => ({ ...prev, form: result.error ?? 'Registration failed. Please try again.' }))
     }
   }
 
@@ -63,6 +66,17 @@ export function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-3.5">
+      {/* Form-level error */}
+      {errors.form && (
+        <div
+          role="alert"
+          className="px-4 py-3 rounded-xl text-sm text-red-700 border border-red-200"
+          style={{ background: 'rgba(239,68,68,0.06)' }}
+        >
+          {errors.form}
+        </div>
+      )}
+
       {/* Full name */}
       <InputField
         id="reg-fullname"
@@ -159,15 +173,15 @@ export function RegisterForm() {
 }
 
 interface InputFieldProps {
-  id:           string
-  label:        string
-  type:         string
-  value:        string
-  onChange:     (v: string) => void
-  placeholder?: string
+  id:            string
+  label:         string
+  type:          string
+  value:         string
+  onChange:      (v: string) => void
+  placeholder?:  string
   autoComplete?: string
-  error?:       string
-  required?:    boolean
+  error?:        string
+  required?:     boolean
 }
 
 function InputField({ id, label, type, value, onChange, placeholder, autoComplete, error, required }: InputFieldProps) {

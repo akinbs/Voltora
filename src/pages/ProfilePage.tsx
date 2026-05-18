@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useAuth } from '../hooks/useAuth'
 import { mockUser } from '../data/mockUser'
 import { ProfileHeader } from '../components/profile/ProfileHeader'
 import { ProfileInfoCard } from '../components/profile/ProfileInfoCard'
@@ -7,6 +8,7 @@ import { ProfileOrdersPreview } from '../components/profile/ProfileOrdersPreview
 import { ProfileSavedAddresses } from '../components/profile/ProfileSavedAddresses'
 import { ProfileSecurityCard } from '../components/profile/ProfileSecurityCard'
 import { ProfilePreferencesCard } from '../components/profile/ProfilePreferencesCard'
+import type { MockUser } from '../types/user'
 
 const TABS = [
   { id: 'overview',    label: 'Overview'    },
@@ -18,12 +20,33 @@ const TABS = [
 
 type TabId = typeof TABS[number]['id']
 
+function useProfileUser(): MockUser {
+  const { userProfile } = useAuth()
+  if (!userProfile) return mockUser
+  return {
+    id:                userProfile.uid,
+    fullName:          userProfile.fullName,
+    email:             userProfile.email,
+    role:              userProfile.role === 'super_admin' ? 'admin' : userProfile.role,
+    avatarInitials:    userProfile.avatarInitials,
+    createdAt:         typeof userProfile.createdAt === 'string'
+                         ? userProfile.createdAt
+                         : new Date().toISOString(),
+    phone:             userProfile.phone,
+    company:           userProfile.company,
+    location:          userProfile.location,
+    preferredCurrency: userProfile.preferredCurrency,
+    savedAddresses:    userProfile.savedAddresses,
+  }
+}
+
 export default function ProfilePage() {
   const [tab, setTab] = useState<TabId>('overview')
+  const user = useProfileUser()
 
   return (
     <div className="min-h-full bg-surface">
-      <ProfileHeader user={mockUser} />
+      <ProfileHeader user={user} />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -64,14 +87,14 @@ export default function ProfilePage() {
           >
             {tab === 'overview' && (
               <div className="space-y-4">
-                <ProfileInfoCard user={mockUser} />
+                <ProfileInfoCard user={user} />
                 <ProfileOrdersPreview limit={3} />
               </div>
             )}
             {tab === 'orders'      && <ProfileOrdersPreview limit={100} />}
-            {tab === 'addresses'   && <ProfileSavedAddresses addresses={mockUser.savedAddresses} />}
+            {tab === 'addresses'   && <ProfileSavedAddresses addresses={user.savedAddresses} />}
             {tab === 'security'    && <ProfileSecurityCard />}
-            {tab === 'preferences' && <ProfilePreferencesCard user={mockUser} />}
+            {tab === 'preferences' && <ProfilePreferencesCard user={user} />}
           </motion.div>
         </AnimatePresence>
 

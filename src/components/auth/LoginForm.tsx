@@ -1,25 +1,25 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { LogIn, Loader2, CheckCircle2 } from 'lucide-react'
 import { PasswordInput } from './PasswordInput'
 import { SocialAuthButtons } from './SocialAuthButtons'
-import { useMockAuth } from '../../hooks/useMockAuth'
+import { useAuth } from '../../hooks/useAuth'
 
 export function LoginForm() {
-  const { login, isLoading } = useMockAuth()
+  const { login, isLoading } = useAuth()
   const navigate = useNavigate()
 
   const [email,      setEmail]      = useState('')
   const [password,   setPassword]   = useState('')
   const [rememberMe, setRememberMe] = useState(false)
-  const [errors,     setErrors]     = useState<{ email?: string; password?: string }>({})
+  const [errors,     setErrors]     = useState<{ email?: string; password?: string; form?: string }>({})
   const [success,    setSuccess]    = useState(false)
 
   const validate = () => {
     const e: typeof errors = {}
-    if (!email.trim())           e.email    = 'Email is required.'
-    else if (!email.includes('@')) e.email  = 'Enter a valid email address.'
-    if (!password)               e.password = 'Password is required.'
+    if (!email.trim())            e.email    = 'Email is required.'
+    else if (!email.includes('@')) e.email   = 'Enter a valid email address.'
+    if (!password)                e.password = 'Password is required.'
     else if (password.length < 6) e.password = 'Password must be at least 6 characters.'
     setErrors(e)
     return Object.keys(e).length === 0
@@ -28,10 +28,12 @@ export function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
-    const ok = await login({ email, password, rememberMe })
-    if (ok) {
+    const result = await login({ email, password, rememberMe })
+    if (result.success) {
       setSuccess(true)
       setTimeout(() => navigate('/profile'), 900)
+    } else {
+      setErrors(prev => ({ ...prev, form: result.error ?? 'Sign-in failed. Please try again.' }))
     }
   }
 
@@ -52,6 +54,17 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
+      {/* Form-level error */}
+      {errors.form && (
+        <div
+          role="alert"
+          className="px-4 py-3 rounded-xl text-sm text-red-700 border border-red-200"
+          style={{ background: 'rgba(239,68,68,0.06)' }}
+        >
+          {errors.form}
+        </div>
+      )}
+
       {/* Email */}
       <div className="flex flex-col gap-1.5">
         <label htmlFor="login-email" className="text-sm font-medium text-voltora-black leading-none">

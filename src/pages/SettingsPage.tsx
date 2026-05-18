@@ -1,6 +1,7 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Settings, User, Lock, Bell, DollarSign, Trash2, AlertTriangle, Check } from 'lucide-react'
+import { useAuth } from '../hooks/useAuth'
 import { mockUser } from '../data/mockUser'
 
 const fadeUp = (delay: number) => ({
@@ -10,9 +11,12 @@ const fadeUp = (delay: number) => ({
 })
 
 export default function SettingsPage() {
-  const [currency, setCurrency]   = useState<'USD' | 'TRY'>(mockUser.preferredCurrency)
-  const [notifs,   setNotifs]     = useState({ orders: true, promos: false, stock: true })
-  const [saved,    setSaved]      = useState(false)
+  const { userProfile } = useAuth()
+  const profile = userProfile ?? mockUser
+
+  const [currency, setCurrency] = useState<'USD' | 'TRY'>(profile.preferredCurrency)
+  const [notifs,   setNotifs]   = useState({ orders: true, promos: false, stock: true })
+  const [saved,    setSaved]    = useState(false)
 
   const handleSave = () => {
     setSaved(true)
@@ -38,11 +42,11 @@ export default function SettingsPage() {
         <motion.section {...fadeUp(0.05)} aria-labelledby="settings-account">
           <SettingsCard icon={User} title="Account Settings" titleId="settings-account">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <SettingsField label="Full name" defaultValue={mockUser.fullName} />
-              <SettingsField label="Email" type="email" defaultValue={mockUser.email} />
-              <SettingsField label="Phone" type="tel" defaultValue={mockUser.phone ?? ''} />
-              <SettingsField label="Company" defaultValue={mockUser.company ?? ''} />
-              <SettingsField label="Location" defaultValue={mockUser.location ?? ''} className="sm:col-span-2" />
+              <SettingsField label="Full name"  defaultValue={profile.fullName}     />
+              <SettingsField label="Email"      type="email" defaultValue={profile.email} />
+              <SettingsField label="Phone"      type="tel"   defaultValue={profile.phone ?? ''} />
+              <SettingsField label="Company"    defaultValue={profile.company ?? ''} />
+              <SettingsField label="Location"   defaultValue={profile.location ?? ''} className="sm:col-span-2" />
             </div>
           </SettingsCard>
         </motion.section>
@@ -51,9 +55,9 @@ export default function SettingsPage() {
         <motion.section {...fadeUp(0.09)} aria-labelledby="settings-security">
           <SettingsCard icon={Lock} title="Security" titleId="settings-security">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <SettingsField label="Current password" type="password" placeholder="••••••••" />
+              <SettingsField label="Current password"     type="password" placeholder="••••••••" />
               <div />
-              <SettingsField label="New password" type="password" placeholder="Min. 6 characters" />
+              <SettingsField label="New password"         type="password" placeholder="Min. 6 characters" />
               <SettingsField label="Confirm new password" type="password" placeholder="Repeat new password" />
             </div>
             <button
@@ -70,9 +74,9 @@ export default function SettingsPage() {
           <SettingsCard icon={Bell} title="Notifications" titleId="settings-notifs">
             <ul className="space-y-3.5">
               {([
-                { key: 'orders', label: 'Order updates',       desc: 'Shipping and delivery notifications' },
-                { key: 'promos', label: 'Promotions',          desc: 'Sales, campaigns and new arrivals'  },
-                { key: 'stock',  label: 'Stock alerts',        desc: 'Notify when wishlisted items restock' },
+                { key: 'orders', label: 'Order updates', desc: 'Shipping and delivery notifications'   },
+                { key: 'promos', label: 'Promotions',    desc: 'Sales, campaigns and new arrivals'     },
+                { key: 'stock',  label: 'Stock alerts',  desc: 'Notify when wishlisted items restock'  },
               ] as const).map(({ key, label, desc }) => (
                 <li key={key} className="flex items-center justify-between gap-4">
                   <div>
@@ -188,11 +192,11 @@ function SettingsCard({ icon: Icon, title, titleId, children }: SettingsCardProp
 }
 
 interface SettingsFieldProps {
-  label:        string
-  type?:        string
+  label:         string
+  type?:         string
   defaultValue?: string
-  placeholder?: string
-  className?:   string
+  placeholder?:  string
+  className?:    string
 }
 
 function SettingsField({ label, type = 'text', defaultValue, placeholder, className }: SettingsFieldProps) {

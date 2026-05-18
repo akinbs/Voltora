@@ -3,18 +3,20 @@ import { ProductsFilterPanel } from './ProductsFilterPanel'
 import type { ProductFilters } from '../../types/filters'
 
 interface ProductsMobileFiltersProps {
-  open:               boolean
-  onClose:            () => void
-  filters:            ProductFilters
-  activeFilterCount:  number
-  onToggleCategory:   (v: string) => void
-  onToggleStock:      (v: string) => void
-  onToggleBrand:      (v: string) => void
-  onToggleTag:        (v: string) => void
-  onMinPrice:         (v: string) => void
-  onMaxPrice:         (v: string) => void
-  onRating:           (v: number | null) => void
-  onClearAll:         () => void
+  open:                 boolean
+  onClose:              () => void
+  filters:              ProductFilters
+  activeFilterCount:    number
+  onToggleCategory:     (v: string) => void
+  onToggleStock:        (v: string) => void
+  onToggleBrand:        (v: string) => void
+  onToggleTag:          (v: string) => void
+  onMinPrice:           (v: string) => void
+  onMaxPrice:           (v: string) => void
+  onRating:             (v: number | null) => void
+  onClearAll:           () => void
+  availableCategories?: string[]
+  availableBrands?:     string[]
 }
 
 export function ProductsMobileFilters({
@@ -30,6 +32,8 @@ export function ProductsMobileFilters({
   onMaxPrice,
   onRating,
   onClearAll,
+  availableCategories,
+  availableBrands,
 }: ProductsMobileFiltersProps) {
   return (
     <Drawer
@@ -53,6 +57,8 @@ export function ProductsMobileFilters({
             onMaxPrice={onMaxPrice}
             onRating={onRating}
             onClearAll={onClearAll}
+            availableCategories={availableCategories}
+            availableBrands={availableBrands}
           />
         </div>
         <div className="sticky bottom-0 px-6 py-4 bg-white border-t border-border">

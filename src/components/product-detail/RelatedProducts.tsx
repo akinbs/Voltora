@@ -4,9 +4,12 @@ import { motion } from 'framer-motion'
 import type { Product } from '../../types/product'
 import { mockProducts } from '../../data/mockProducts'
 import { ProductCard } from '../product/ProductCard'
+import { SkeletonCard } from '../ui/Skeleton'
 
 interface RelatedProductsProps {
   currentProduct: Product
+  products?:      Product[]
+  loading?:       boolean
 }
 
 function getRelated(current: Product): Product[] {
@@ -25,9 +28,9 @@ const item = {
   show:   { opacity: 1, y: 0, transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as number[] } },
 }
 
-export function RelatedProducts({ currentProduct }: RelatedProductsProps) {
-  const related = getRelated(currentProduct)
-  if (related.length === 0) return null
+export function RelatedProducts({ currentProduct, products, loading = false }: RelatedProductsProps) {
+  const related = products ?? getRelated(currentProduct)
+  if (!loading && related.length === 0) return null
 
   return (
     <section aria-label="Related products">
@@ -49,24 +52,30 @@ export function RelatedProducts({ currentProduct }: RelatedProductsProps) {
         </Link>
       </div>
 
-      <motion.div
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: '-40px' }}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
-      >
-        {related.map(product => (
-          <motion.div key={product.id} variants={item}>
-            <ProductCard
-              product={product}
-              variant="default"
-              showQuickActions
-              showSpecs={false}
-            />
-          </motion.div>
-        ))}
-      </motion.div>
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {Array.from({ length: 4 }, (_, i) => <SkeletonCard key={i} />)}
+        </div>
+      ) : (
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-40px' }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+        >
+          {related.map(product => (
+            <motion.div key={product.id} variants={item}>
+              <ProductCard
+                product={product}
+                variant="default"
+                showQuickActions
+                showSpecs={false}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
 
       <div className="sm:hidden mt-4 text-center">
         <Link

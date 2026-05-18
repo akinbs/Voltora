@@ -1,5 +1,8 @@
+import { useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { AlertTriangle } from 'lucide-react'
+import { useProducts } from '../hooks/useProducts'
 import { useProductFilters } from '../hooks/useProductFilters'
-import { mockProducts } from '../data/mockProducts'
 import { ProductGrid } from '../components/product/ProductGrid'
 import { ProductsHeader } from '../components/products/ProductsHeader'
 import { ProductsToolbar } from '../components/products/ProductsToolbar'
@@ -9,6 +12,11 @@ import { ProductsActiveFilters } from '../components/products/ProductsActiveFilt
 import { ProductsResultSummary } from '../components/products/ProductsResultSummary'
 
 export default function ProductsPage() {
+  const [searchParams] = useSearchParams()
+  const categoryParam  = searchParams.get('category') ?? searchParams.get('cat') ?? undefined
+
+  const { products, isLoading, error, source } = useProducts()
+
   const {
     filters,
     filteredProducts,
@@ -30,11 +38,23 @@ export default function ProductsPage() {
     removeFilter,
     openMobileFilters,
     closeMobileFilters,
-  } = useProductFilters()
+  } = useProductFilters(products, categoryParam)
+
+  // Derive filter options from loaded products
+  const availableCategories = useMemo(
+    () => [...new Set(products.map(p => p.categoryId ?? p.category))].sort(),
+    [products],
+  )
+  const availableBrands = useMemo(
+    () => [...new Set(products.map(p => p.brand).filter((b): b is string => !!b))].sort(),
+    [products],
+  )
 
   const filterPanelProps = {
     filters,
     activeFilterCount,
+    availableCategories,
+    availableBrands,
     onToggleCategory:  toggleCategory,
     onToggleStock:     toggleStockStatus,
     onToggleBrand:     toggleBrand,
@@ -50,13 +70,21 @@ export default function ProductsPage() {
       <ProductsHeader />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Firestore fallback notice */}
+        {!isLoading && (error || source === 'mock') && (
+          <div className="flex items-center gap-2 mt-4 px-3 py-2.5 rounded-xl text-xs text-amber-700 border border-amber-200 bg-amber-50">
+            <AlertTriangle size={13} className="shrink-0" aria-hidden="true" />
+            Showing preview data. Connect Firestore and seed products for live catalog.
+          </div>
+        )}
+
         {/* Toolbar */}
         <ProductsToolbar
           filters={filters}
           sortBy={sortBy}
           viewMode={viewMode}
           activeFilterCount={activeFilterCount}
-          totalCount={mockProducts.length}
+          totalCount={products.length}
           filteredCount={filteredProducts.length}
           onSearch={setSearchQuery}
           onSort={setSortBy}
@@ -85,7 +113,7 @@ export default function ProductsPage() {
             {/* Result summary visible below xl */}
             <div className="xl:hidden mb-4">
               <ProductsResultSummary
-                total={mockProducts.length}
+                total={products.length}
                 filtered={filteredProducts.length}
                 searchQuery={filters.searchQuery}
                 activeFilterCount={activeFilterCount}
@@ -96,6 +124,8 @@ export default function ProductsPage() {
               products={filteredProducts}
               viewMode={viewMode}
               columns={3}
+              loading={isLoading}
+              skeletonCount={9}
               showQuickActions
               showSpecs
             />

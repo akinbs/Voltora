@@ -1,6 +1,6 @@
-import { useState, useMemo, useCallback } from 'react'
-import { mockProducts } from '../data/mockProducts'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { filterProducts, sortProducts } from '../utils/productFilters'
+import type { Product } from '../types/product'
 import type { ProductFilters, ProductSortOption, ProductViewMode } from '../types/filters'
 
 const DEFAULT_FILTERS: ProductFilters = {
@@ -18,15 +18,31 @@ function toggle(arr: string[], value: string): string[] {
   return arr.includes(value) ? arr.filter(v => v !== value) : [...arr, value]
 }
 
-export function useProductFilters() {
-  const [filters, setFilters]               = useState<ProductFilters>(DEFAULT_FILTERS)
+export function useProductFilters(
+  products:        Product[],
+  initialCategory?: string,
+) {
+  const [filters, setFilters]               = useState<ProductFilters>(() => ({
+    ...DEFAULT_FILTERS,
+    selectedCategories: initialCategory ? [initialCategory] : [],
+  }))
   const [sortBy, setSortBy]                 = useState<ProductSortOption>('featured')
   const [viewMode, setViewMode]             = useState<ProductViewMode>('grid')
   const [isMobileFilterOpen, setMobileOpen] = useState(false)
 
+  // Sync initialCategory when it first arrives (async URL params)
+  useEffect(() => {
+    if (initialCategory) {
+      setFilters(f => ({
+        ...f,
+        selectedCategories: f.selectedCategories.length === 0 ? [initialCategory] : f.selectedCategories,
+      }))
+    }
+  }, [initialCategory])
+
   const filteredProducts = useMemo(
-    () => sortProducts(filterProducts(mockProducts, filters), sortBy),
-    [filters, sortBy],
+    () => sortProducts(filterProducts(products, filters), sortBy),
+    [products, filters, sortBy],
   )
 
   const activeFilterCount = useMemo(() => {

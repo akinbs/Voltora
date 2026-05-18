@@ -1,10 +1,10 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Mail, Loader2, CheckCircle2, ArrowLeft } from 'lucide-react'
-import { useMockAuth } from '../../hooks/useMockAuth'
+import { useAuth } from '../../hooks/useAuth'
 
 export function ForgotPasswordForm() {
-  const { forgotPassword, isLoading } = useMockAuth()
+  const { forgotPassword, isLoading } = useAuth()
   const [email,   setEmail]   = useState('')
   const [error,   setError]   = useState('')
   const [success, setSuccess] = useState(false)
@@ -16,8 +16,12 @@ export function ForgotPasswordForm() {
       return
     }
     setError('')
-    await forgotPassword(email)
-    setSuccess(true)
+    const result = await forgotPassword(email)
+    if (result.success) {
+      setSuccess(true)
+    } else {
+      setError(result.error ?? 'Failed to send reset link. Please try again.')
+    }
   }
 
   if (success) {
@@ -31,7 +35,7 @@ export function ForgotPasswordForm() {
           <div>
             <p className="text-sm font-semibold text-voltora-black mb-0.5">Check your inbox</p>
             <p className="text-xs text-muted/70 leading-relaxed">
-              If an account exists for <strong>{email}</strong>, a reset link will be sent when the backend is connected.
+              If an account exists for <strong>{email}</strong>, a password reset link has been sent.
             </p>
           </div>
         </div>

@@ -21,7 +21,7 @@ const dropdownVariants = {
 }
 
 export function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) {
-  const { isAuthenticated, user, logout } = useAuth()
+  const { isAuthenticated, isLoading, userProfile, logout } = useAuth()
   const [profileOpen, setProfileOpen] = useState(false)
   const [scrolled,    setScrolled]    = useState(false)
   const profileRef = useRef<HTMLDivElement>(null)
@@ -97,7 +97,7 @@ export function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) {
           ))}
 
           {/* Login — sadece çıkış yapıldığında */}
-          {!isAuthenticated && (
+          {!isLoading && !isAuthenticated && (
             <Link
               to="/login"
               className="
@@ -115,7 +115,7 @@ export function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) {
           )}
 
           {/* Profil avatar — sadece giriş yapıldığında */}
-          {isAuthenticated && (
+          {!isLoading && isAuthenticated && (
             <div className="relative ml-1" ref={profileRef}>
               <button
                 type="button"
@@ -134,7 +134,7 @@ export function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) {
                   focus-visible:outline focus-visible:outline-2 focus-visible:outline-mint
                 "
               >
-                {user?.avatarInitials ?? 'AB'}
+                {userProfile?.avatarInitials ?? '…'}
               </button>
 
               <AnimatePresence>
@@ -174,7 +174,7 @@ export function Navbar({ isSidebarOpen, onToggleSidebar }: NavbarProps) {
                             <button
                               type="button"
                               role="menuitem"
-                              onClick={() => { logout(); setProfileOpen(false) }}
+                              onClick={async () => { await logout(); setProfileOpen(false) }}
                               className={itemCls}
                             >
                               <Icon size={15} aria-hidden="true" strokeWidth={1.75} />

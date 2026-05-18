@@ -4,12 +4,17 @@ import type { ProductFilters, ProductSortOption } from '../types/filters'
 export function getProductSearchText(product: Product): string {
   return [
     product.name,
+    product.slug,
     product.category,
+    product.categoryId ?? '',
     product.description,
+    product.longDescription ?? '',
     product.brand ?? '',
     product.sku,
     ...product.badges.map(b => b.label),
     ...product.specs.map(s => `${s.label} ${s.value}`),
+    ...(product.features ?? []),
+    ...(product.applications ?? []),
   ].join(' ').toLowerCase()
 }
 
@@ -26,7 +31,14 @@ export function filterProducts(products: Product[], filters: ProductFilters): Pr
       const text = getProductSearchText(product)
       if (!text.includes(filters.searchQuery.trim().toLowerCase())) return false
     }
-    if (filters.selectedCategories.length > 0 && !filters.selectedCategories.includes(product.category)) return false
+
+    if (filters.selectedCategories.length > 0) {
+      const matches = filters.selectedCategories.some(
+        cat => product.category === cat || product.categoryId === cat,
+      )
+      if (!matches) return false
+    }
+
     if (filters.selectedStockStatuses.length > 0 && !filters.selectedStockStatuses.includes(product.stockStatus)) return false
     if (filters.selectedBrands.length > 0 && (!product.brand || !filters.selectedBrands.includes(product.brand))) return false
     if (filters.selectedTags.length > 0 && !filters.selectedTags.some(tag => matchesTag(product, tag))) return false

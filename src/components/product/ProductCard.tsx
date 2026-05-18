@@ -1,7 +1,8 @@
-﻿import { Link } from 'react-router-dom'
+﻿import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ShoppingCart } from 'lucide-react'
 import { motion } from 'framer-motion'
-import type { Product } from '../../types/product'
+import type { Product, ProductStorageImage as StorageImageType } from '../../types/product'
 import { ProductVisual } from './ProductVisual'
 import { ProductRating } from './ProductRating'
 import { ProductPrice } from './ProductPrice'
@@ -9,6 +10,32 @@ import { ProductStockBadge } from './ProductStockBadge'
 import { ProductSpecsChips } from './ProductSpecsChips'
 import { ProductQuickActions } from './ProductQuickActions'
 import { useToast } from '../../hooks/useToast'
+
+function getPrimaryStorageImage(images: StorageImageType[]): StorageImageType | undefined {
+  return images.find(img => img.isPrimary) ?? images[0]
+}
+
+function StorageImg({
+  image,
+  alt,
+  className = '',
+}: {
+  image:      StorageImageType
+  alt:        string
+  className?: string
+}) {
+  const [failed, setFailed] = useState(false)
+  if (failed) return null
+  return (
+    <img
+      src={image.url}
+      alt={alt}
+      onError={() => setFailed(true)}
+      className={`w-full h-full object-contain ${className}`}
+      loading="lazy"
+    />
+  )
+}
 
 interface ProductCardProps {
   product:           Product
@@ -89,7 +116,16 @@ function CompactCard({
     >
       {/* Visual thumbnail */}
       <div className="relative w-20 shrink-0 overflow-hidden">
-        <ProductVisual visualType={product.visualType} name={product.name} size="xs" />
+        {product.storageImages && product.storageImages.length > 0 ? (
+          (() => {
+            const img = getPrimaryStorageImage(product.storageImages!)
+            return img
+              ? <StorageImg image={img} alt={product.name} />
+              : <ProductVisual visualType={product.visualType} name={product.name} size="xs" />
+          })()
+        ) : (
+          <ProductVisual visualType={product.visualType} name={product.name} size="xs" />
+        )}
         {isOutOfStock && (
           <div className="absolute inset-0 bg-white/60 flex items-center justify-center pointer-events-none">
             <span className="text-[8px] font-bold text-muted/60">OOS</span>
@@ -205,7 +241,20 @@ export function ProductCard({
     >
       {/* ── Visual ──────────────────────────────────── */}
       <div className="relative shrink-0">
-        <ProductVisual visualType={product.visualType} name={product.name} size={visualSize} />
+        {product.storageImages && product.storageImages.length > 0 ? (
+          (() => {
+            const img = getPrimaryStorageImage(product.storageImages!)
+            return img
+              ? (
+                <div className={`relative overflow-hidden ${isFeatured ? 'h-56' : 'h-44'} bg-surface`}>
+                  <StorageImg image={img} alt={product.name} />
+                </div>
+              )
+              : <ProductVisual visualType={product.visualType} name={product.name} size={visualSize} />
+          })()
+        ) : (
+          <ProductVisual visualType={product.visualType} name={product.name} size={visualSize} />
+        )}
 
         {/* Badges */}
         {(product.isNew || product.isBestSeller) && (

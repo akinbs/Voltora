@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Package } from 'lucide-react'
-import { mockProducts } from '../data/mockProducts'
+import { useProductDetail } from '../hooks/useProductDetail'
 import { EmptyState } from '../components/ui/EmptyState'
 import { ProductBreadcrumb } from '../components/product-detail/ProductBreadcrumb'
 import { ProductGallery } from '../components/product-detail/ProductGallery'
@@ -17,9 +17,50 @@ const fadeUp = {
   transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as number[] },
 }
 
+function ProductDetailSkeleton() {
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 animate-pulse">
+      <div className="h-4 w-52 bg-border rounded mb-6" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 mb-10">
+        <div className="flex flex-col gap-3">
+          <div className="aspect-square rounded-2xl bg-surface border border-border" />
+          <div className="flex gap-2">
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} style={{ width: 72, height: 56 }} className="rounded-xl bg-surface border border-border" />
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 pt-2">
+          <div className="h-3 w-24 bg-border rounded" />
+          <div className="h-7 w-3/4 bg-border rounded" />
+          <div className="h-4 w-1/2 bg-border rounded" />
+          <div className="h-10 w-32 bg-border rounded" />
+          <div className="h-px bg-border" />
+          <div className="h-24 bg-surface border border-border rounded-xl" />
+          <div className="h-12 bg-border rounded-xl" />
+          <div className="h-12 bg-border rounded-xl" />
+        </div>
+      </div>
+      <div className="h-10 w-64 bg-border rounded-xl mb-6" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-14">
+        <div className="h-32 bg-surface border border-border rounded-2xl" />
+        <div className="h-32 bg-surface border border-border rounded-2xl" />
+      </div>
+    </div>
+  )
+}
+
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>()
-  const product = mockProducts.find(p => p.slug === slug)
+  const { product, relatedProducts, isLoading } = useProductDetail(slug)
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full bg-surface">
+        <ProductDetailSkeleton />
+      </div>
+    )
+  }
 
   if (!product) {
     return (
@@ -85,7 +126,10 @@ export default function ProductDetailPage() {
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.5 }}
         >
-          <RelatedProducts currentProduct={product} />
+          <RelatedProducts
+            currentProduct={product}
+            products={relatedProducts}
+          />
         </motion.div>
 
       </div>
